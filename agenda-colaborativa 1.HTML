@@ -1,0 +1,166 @@
+<!-- ==================================================================== -->
+<!-- ARQUIVO 2: PÁGINA DA AGENDA (agenda.html)                          -->
+<!-- Salve este código como um arquivo .html no seu computador.         -->
+<!-- ==================================================================== -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Colaborativa da Equipe</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root { --bg: #F8F9FA; --card-bg: #FFFFFF; --primary: #4A90E2; --text: #343A40; --text-light: #6C757D; --border: #E9ECEF; --shadow: 0 4px 15px rgba(0, 0, 0, 0.07 ); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 380px; gap: 30px; align-items: start; }
+        @media (max-width: 992px) { .container { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .form-card { position: sticky; top: 40px; }
+        h1, h2 { font-weight: 700; margin-bottom: 20px; }
+        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 40px; color: var(--primary); }
+        h2 { font-size: 1.5rem; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #CED4DA; border-radius: 8px; font-size: 1rem; }
+        .btn { background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.2s; }
+        .btn:hover { background-color: #357ABD; }
+        #tasks-container { display: grid; gap: 20px; }
+        .task-card { border-left: 5px solid var(--primary); padding: 20px; transition: transform 0.2s, box-shadow 0.2s; }
+        .task-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .task-title { font-size: 1.2rem; font-weight: 600; }
+        .task-status { background-color: #FFC107; color: #333; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
+        .task-body { color: var(--text-light); margin-bottom: 15px; }
+        .task-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #ADB5BD; }
+        .loading { text-align: center; padding: 50px; font-size: 1.5rem; color: var(--text-light); }
+    </style>
+</head>
+<body>
+    
+    <h1><i class="fas fa-tasks"></i> Agenda da Equipe</h1>
+
+    <div class="container">
+        <div class="tasks-section">
+            <div id="tasks-container" class="card">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>
+            </div>
+        </div>
+
+        <div class="form-card card">
+            <h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="responsavel">Seu Nome</label>
+                    <input type="text" id="responsavel" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="titulo">Título da Tarefa</label>
+                    <input type="text" id="titulo" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição</label>
+                    <textarea id="descricao" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prazo">Prazo</label>
+                    <input type="datetime-local" id="prazo" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Adicionar Tarefa</button>
+            </form>
+        </div>
+    </div>
+
+<script>
+    // !!! COLE A URL DO SEU SCRIPT DO GOOGLE AQUI !!!
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6h1pBvJ9Yi0e-0bNvxS5GjioKSjkf2OR8OKH_3cFRfPpyr6nsiZx_kJ_nU86sMFdGpA/exec"; 
+    
+    const tasksContainer = document.getElementById('tasks-container');
+    const taskForm = document.getElementById('taskForm');
+
+    // Função para buscar e exibir as tarefas da planilha
+    async function fetchTasks() {
+        tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const tasks = await response.json();
+            
+            tasksContainer.innerHTML = ''; 
+            if (tasks.length === 0) {
+                tasksContainer.innerHTML = `<div class="loading">Nenhuma tarefa encontrada. Adicione a primeira!</div>`;
+            } else {
+                tasks.forEach(task => {
+                    const taskCard = document.createElement('div');
+                    taskCard.className = 'card task-card';
+                    
+                    const prazo = new Date(task.Prazo).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                    
+                    taskCard.innerHTML = `
+                        <div class="task-header">
+                            <span class="task-title">${task.Titulo_Tarefa}</span>
+                            <span class="task-status">${task.Status}</span>
+                        </div>
+                        <div class="task-body">${task.Descricao}</div>
+                        <div class="task-footer">
+                            <span><i class="fas fa-user"></i> ${task.Responsavel}</span>
+                            <span><i class="fas fa-calendar-alt"></i> Prazo: ${prazo}</span>
+                        </div>
+                    `;
+                    tasksContainer.appendChild(taskCard);
+                });
+            }
+        } catch (error) {
+            tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL do script e as permissões.</div>`;
+            console.error('Erro:', error);
+        }
+    }
+
+    // Função para adicionar uma nova tarefa na planilha
+    taskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.textContent = 'Adicionando...';
+        btn.disabled = true;
+
+        const taskData = {
+            responsavel: document.getElementById('responsavel').value,
+            titulo: document.getElementById('titulo').value,
+            descricao: document.getElementById('descricao').value,
+            prazo: document.getElementById('prazo').value,
+        };
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                body: JSON.stringify(taskData)
+            });
+            
+            taskForm.reset();
+            alert('Tarefa adicionada com sucesso!');
+            
+            setTimeout(() => {
+                fetchTasks();
+            }, 1500);
+
+        } catch (error) {
+            console.error('Erro ao adicionar tarefa:', error);
+            alert('Ocorreu um erro ao adicionar a tarefa. Tente novamente.');
+        } finally {
+            btn.textContent = 'Adicionar Tarefa';
+            btn.disabled = false;
+        }
+    });
+
+    // Carrega as tarefas ao iniciar a página
+    document.addEventListener('DOMContentLoaded', fetchTasks);
+</script>
+
+</body>
+</html>
