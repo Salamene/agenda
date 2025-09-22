@@ -11,20 +11,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* CSS (com um pequeno ajuste para os botões desativados ) */
+        /* ==================================================================== */
+        /* CSS COM OS AJUSTES FINAIS DE LAYOUT E ESTILO                       */
+        /* ==================================================================== */
         :root {
-            --bg: #f4f7f9; --card-bg: #FFFFFF; --primary: #3662E1; --primary-light: #eef2ff;
-            --text: #1e293b; --text-light: #64748b; --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --bg: #f4f7f9;
+            --card-bg: #FFFFFF;
+            --primary: #3662E1;
+            --primary-light: #eef2ff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1 ), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --status-pendente-bg: #fffbeb; --status-pendente-text: #b45309;
-            --status-andamento-bg: #eff6ff; --status-andamento-text: #1d4ed8;
-            --status-finalizado-bg: #f0fdf4; --status-finalizado-text: #15803d;
+            --status-pendente-bg: #fffbeb;
+            --status-pendente-text: #b45309;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        /* --- Layout Principal Invertido --- */
         .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
         .main-content { display: flex; flex-direction: column; gap: 40px; }
+
         .card { background: var(--card-bg); border-radius: 16px; padding: 35px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         h1, h2 { font-weight: 700; margin-bottom: 25px; }
         h1 { font-size: 2.2rem; text-align: center; margin-bottom: 40px; color: var(--primary); }
@@ -35,90 +44,104 @@
         .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); outline: none; }
         .btn { background-color: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn:hover { background-color: #254ac4; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        
+        /* --- Layout de Abas (Tabs) --- */
         .tabs-container { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 25px; }
         .tab-btn { background: none; border: none; padding: 12px 20px; cursor: pointer; font-size: 1rem; font-weight: 500; color: var(--text-light); position: relative; }
         .tab-btn.active { color: var(--primary); font-weight: 600; }
         .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--primary); }
+        
         #tasks-container { display: flex; flex-direction: column; gap: 30px; }
         .date-group { }
         .date-header { font-size: 1.1rem; font-weight: 600; color: var(--text); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .date-header .fa-calendar-day { color: var(--primary); }
         .tasks-list { display: grid; gap: 18px; }
-        .task-card { border-left: 4px solid var(--primary); padding: 20px 25px; transition: all 0.3s; position: relative; }
+        
+        /* --- Cards de Tarefa com Fontes Ajustadas --- */
+        .task-card { border-left: 4px solid var(--primary); padding: 20px 25px; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
         .task-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
         .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .task-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 4px; transition: color 0.3s; }
+        .task-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 4px; }
         .task-time { font-size: 0.85rem; font-weight: 500; color: var(--primary); }
-        .task-status { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-        .task-status.Pendente { background-color: var(--status-pendente-bg); color: var(--status-pendente-text); }
-        .task-status.Em-Andamento { background-color: var(--status-andamento-bg); color: var(--status-andamento-text); }
-        .task-status.Finalizado { background-color: var(--status-finalizado-bg); color: var(--status-finalizado-text); }
-        .task-body { font-size: 0.9rem; color: var(--text-light); margin-bottom: 18px; padding-left: 8px; border-left: 2px solid var(--border); transition: color 0.3s; }
-        .task-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-light); }
-        .task-actions { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
-        .action-btn { background: #f1f5f9; color: #475569; border: none; cursor: pointer; font-size: 0.8rem; padding: 8px 12px; border-radius: 6px; font-weight: 500; transition: all 0.2s; }
-        .action-btn:hover:not(:disabled) { background: #e2e8f0; }
-        .action-btn:disabled { opacity: 0.4; cursor: not-allowed; } /* Botões desativados */
-        .task-card.Finalizado { border-left-color: #22c55e; background-color: #fafdfb; }
-        .task-card.Finalizado .task-title { text-decoration: line-through; color: var(--text-light); }
-        .task-card.Finalizado .task-body, .task-card.Finalizado .task-time { color: #9ca3af; }
-        .loading, .empty-state { text-align: center; padding: 60px 20px; }
+        .task-status { background-color: var(--status-pendente-bg); color: var(--status-pendente-text); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .task-body { font-size: 0.9rem; color: var(--text-light); margin-bottom: 18px; padding-left: 8px; border-left: 2px solid var(--border); }
+        .task-footer { display: flex; align-items: center; font-size: 0.85rem; color: var(--text-light); gap: 8px; }
+        
+        .loading { text-align: center; padding: 50px; font-size: 1.5rem; color: var(--text-light); }
+        .empty-state { text-align: center; padding: 60px 20px; }
         .empty-state .fa-inbox { font-size: 3rem; color: #cbd5e1; margin-bottom: 15px; }
         .empty-state p { font-size: 1.1rem; color: var(--text-light); }
+
+        /* --- Novo Rodapé --- */
         .footer { text-align: center; margin-top: 50px; padding: 20px; font-size: 0.9rem; color: var(--text-light); }
-        #user-greeting { text-align: center; margin-bottom: 20px; font-size: 1.1rem; }
-        #user-greeting span { font-weight: 600; color: var(--primary); }
-        #change-user-btn { margin-left: 10px; background: none; border: none; color: var(--primary); cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
     
-    <h1><i class="fas fa-calendar-check"></i> AGENDA INTELIGENTE SEMED V 1.1.0</h1>
+    <!-- Título Principal Alterado -->
+    <h1><i class="fas fa-calendar-check"></i> AGENDA INTELIGENTE SEMED V 1.0.0</h1>
 
     <div class="container">
         <div class="main-content">
-            <div id="user-greeting" class="card" style="display: none;"></div>
-            <div class="form-card card"><form id="taskForm"><h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2><div class="form-group"><label for="responsavel">Seu Nome (Responsável)</label><input type="text" id="responsavel" required></div><div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" required></div><div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" class="form-control" rows="4"></textarea></div><div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" required></div><button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Adicionar Tarefa</button></form></div>
-            <div class="tasks-section"><div class="card"><div class="tabs-container" id="tabs-container"><button class="tab-btn active" data-filter="today">Hoje</button><button class="tab-btn" data-filter="week">Próximos 7 Dias</button><button class="tab-btn" data-filter="all">Todas as Tarefas</button></div><div id="tasks-container"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div></div></div></div>
+            
+            <!-- Formulário de Nova Tarefa (Agora em cima) -->
+            <div class="form-card card">
+                <h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="responsavel">Seu Nome</label>
+                        <input type="text" id="responsavel" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="titulo">Título da Tarefa</label>
+                        <input type="text" id="titulo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <!-- Caixa de descrição aumentada -->
+                        <textarea id="descricao" class="form-control" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="prazo">Prazo</label>
+                        <input type="datetime-local" id="prazo" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Adicionar Tarefa</button>
+                </form>
+            </div>
+
+            <!-- Seção de Tarefas (Agora embaixo) -->
+            <div class="tasks-section">
+                <div class="card">
+                    <div class="tabs-container" id="tabs-container">
+                        <button class="tab-btn active" data-filter="today">Hoje</button>
+                        <button class="tab-btn" data-filter="week">Próximos 7 Dias</button>
+                        <button class="tab-btn" data-filter="all">Todas as Tarefas</button>
+                    </div>
+                    <div id="tasks-container">
+                        <div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <footer class="footer">DESENVOLVIDO NA SEMED LEANDRO SALAMENE</footer>
+    <!-- Rodapé Adicionado -->
+    <footer class="footer">
+        DESENVOLVIDO NA SEMED LEANDRO SALAMENE
+    </footer>
 
 <script>
+    // ====================================================================
+    // NÚCLEO DO CÓDIGO JAVASCRIPT (INTOCADO)
+    // ====================================================================
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXEChp53E_J3TQt5htIU5WcIQ8aBweKBqoomNrxHeLY03B83TTKjqilpAwLEi2C77Ofg/exec"; 
     
     const tasksContainer = document.getElementById('tasks-container' );
     const taskForm = document.getElementById('taskForm');
     const tabsContainer = document.getElementById('tabs-container');
-    const userGreetingDiv = document.getElementById('user-greeting');
-    const responsavelInput = document.getElementById('responsavel');
-
     let allTasks = [];
     let activeFilter = 'today';
-    let currentUser = '';
-
-    // --- NOVA LÓGICA DE IDENTIFICAÇÃO DO USUÁRIO ---
-    function identifyUser() {
-        let userName = localStorage.getItem('agendaUserName');
-        if (!userName) {
-            userName = prompt("Bem-vindo(a)! Por favor, digite seu nome para continuar:");
-            if (!userName) { // Se o usuário cancelar, usamos um nome padrão
-                userName = "Visitante";
-            }
-            localStorage.setItem('agendaUserName', userName);
-        }
-        currentUser = userName;
-        userGreetingDiv.innerHTML = `Olá, <span>${currentUser}</span>! <button id="change-user-btn">Trocar de usuário</button>`;
-        userGreetingDiv.style.display = 'block';
-        responsavelInput.value = currentUser; // Preenche o campo "Responsável" automaticamente
-        
-        document.getElementById('change-user-btn').addEventListener('click', () => {
-            localStorage.removeItem('agendaUserName');
-            identifyUser();
-            renderTasks(); // Re-renderiza as tarefas com as novas permissões
-        });
-    }
 
     const getLocalDateKey = (date) => { const d = new Date(date); const offset = d.getTimezoneOffset(); const correctedDate = new Date(d.getTime() - (offset*60*1000)); return correctedDate.toISOString().split('T')[0]; };
 
@@ -130,14 +153,30 @@
         nextWeek.setDate(today.getDate() + 7);
 
         let filteredTasks = [];
-        if (activeFilter === 'today') { filteredTasks = allTasks.filter(task => getLocalDateKey(task.Prazo) === todayKey); } 
-        else if (activeFilter === 'week') { filteredTasks = allTasks.filter(task => { const taskDate = new Date(task.Prazo); return taskDate >= today && taskDate <= nextWeek; }); } 
-        else { filteredTasks = allTasks; }
+        if (activeFilter === 'today') {
+            filteredTasks = allTasks.filter(task => getLocalDateKey(task.Prazo) === todayKey);
+        } else if (activeFilter === 'week') {
+            filteredTasks = allTasks.filter(task => {
+                const taskDate = new Date(task.Prazo);
+                return taskDate >= today && taskDate <= nextWeek;
+            });
+        } else {
+            filteredTasks = allTasks;
+        }
 
-        const tasksByDate = filteredTasks.reduce((acc, task) => { const dateKey = getLocalDateKey(task.Prazo); if (!acc[dateKey]) acc[dateKey] = []; acc[dateKey].push(task); return acc; }, {});
+        const tasksByDate = filteredTasks.reduce((acc, task) => {
+            const dateKey = getLocalDateKey(task.Prazo);
+            if (!acc[dateKey]) acc[dateKey] = [];
+            acc[dateKey].push(task);
+            return acc;
+        }, {});
+
         const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(a) - new Date(b));
         
-        if (sortedDates.length === 0) { tasksContainer.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma tarefa para esta visualização.</p></div>`; return; }
+        if (sortedDates.length === 0) {
+             tasksContainer.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma tarefa para esta visualização.</p></div>`;
+             return;
+        }
 
         sortedDates.forEach(dateKey => {
             const dateGroup = document.createElement('div');
@@ -145,75 +184,103 @@
             const displayDate = new Date(dateKey + 'T00:00:00');
             const dateHeader = document.createElement('h3');
             dateHeader.className = 'date-header';
+            
             let dateText = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-            if (dateKey === todayKey) { dateText += " (Hoje)"; dateHeader.style.color = '#16a34a'; }
+            if (dateKey === todayKey) {
+                dateText += " (Hoje)";
+                dateHeader.style.color = '#16a34a';
+            }
             dateHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${dateText}`;
+
             const tasksList = document.createElement('div');
             tasksList.className = 'tasks-list';
 
             tasksByDate[dateKey].sort((a, b) => new Date(a.Prazo) - new Date(b.Prazo)).forEach(task => {
                 const taskCard = document.createElement('div');
-                const statusClass = task.Status.replace(/\s+/g, '-');
-                taskCard.className = `card task-card ${statusClass}`;
-                taskCard.dataset.taskId = task.ID_Tarefa;
-
-                // --- NOVA LÓGICA DE PERMISSÃO ---
-                const isOwner = currentUser.trim().toLowerCase() === task.Responsavel.trim().toLowerCase();
-                const buttonsDisabled = isOwner ? '' : 'disabled';
-
+                taskCard.className = 'card task-card';
                 const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 taskCard.innerHTML = `
                     <div class="task-header">
-                        <div><div class="task-title">${task.Titulo_Tarefa}</div><div class="task-time"><i class="far fa-clock"></i> ${prazo}</div></div>
-                        <span class="task-status ${statusClass}">${task.Status}</span>
+                        <div>
+                            <div class="task-title">${task.Titulo_Tarefa}</div>
+                            <div class="task-time"><i class="far fa-clock"></i> ${prazo}</div>
+                        </div>
+                        <span class="task-status">${task.Status}</span>
                     </div>
                     <div class="task-body">${task.Descricao || '<i>Sem descrição.</i>'}</div>
-                    <div class="task-footer"><span><i class="fas fa-user-circle"></i> ${task.Responsavel}</span></div>
-                    <div class="task-actions">
-                        <button class="action-btn" data-status="Em Andamento" ${buttonsDisabled}><i class="fas fa-spinner"></i> Em Andamento</button>
-                        <button class="action-btn" data-status="Finalizado" ${buttonsDisabled}><i class="fas fa-check-circle"></i> Finalizado</button>
-                        <button class="action-btn" data-status="Pendente" ${buttonsDisabled}><i class="fas fa-undo"></i> Marcar como Pendente</button>
+                    <div class="task-footer">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${task.Responsavel}</span>
                     </div>`;
                 tasksList.appendChild(taskCard);
             });
+
             dateGroup.appendChild(dateHeader);
             dateGroup.appendChild(tasksList);
             tasksContainer.appendChild(dateGroup);
         });
     };
     
-    tabsContainer.addEventListener('click', (e) => { if (e.target.classList.contains('tab-btn')) { tabsContainer.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); activeFilter = e.target.dataset.filter; renderTasks(); } });
-
-    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error('Erro:', error); } }
-
-    taskForm.addEventListener('submit', async (e) => { e.preventDefault(); const btn = e.target.querySelector('button'); btn.textContent = 'Salvando...'; btn.disabled = true; const taskData = { responsavel: document.getElementById('responsavel').value, titulo: document.getElementById('titulo').value, descricao: document.getElementById('descricao').value, prazo: document.getElementById('prazo').value, }; try { await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(taskData), }); alert('Tarefa enviada com sucesso!'); taskForm.reset(); responsavelInput.value = currentUser; setTimeout(() => { fetchAndRenderTasks(); }, 2000); } catch (error) { console.error('Erro:', error); alert('Ocorreu um erro: ' + error.message); } finally { btn.textContent = 'Adicionar Tarefa'; btn.disabled = false; } });
-
-    tasksContainer.addEventListener('click', async (e) => {
-        const button = e.target.closest('.action-btn');
-        if (button && !button.disabled) {
-            const taskId = button.closest('.task-card').dataset.taskId;
-            const newStatus = button.dataset.status;
-            button.textContent = 'Atualizando...';
-            button.disabled = true;
-            const updateData = { action: 'updateStatus', id: taskId, status: newStatus };
-            try {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(updateData), });
-                const taskIndex = allTasks.findIndex(t => t.ID_Tarefa === taskId);
-                if (taskIndex > -1) { allTasks[taskIndex].Status = newStatus; }
-                renderTasks();
-            } catch (error) {
-                console.error('Erro:', error);
-                alert('Ocorreu um erro ao atualizar.');
-                renderTasks(); // Re-renderiza para restaurar o botão
-            }
+    tabsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tab-btn')) {
+            tabsContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            activeFilter = e.target.dataset.filter;
+            renderTasks();
         }
     });
 
-    // --- INICIALIZAÇÃO COM IDENTIFICAÇÃO ---
-    document.addEventListener('DOMContentLoaded', () => {
-        identifyUser();
-        fetchAndRenderTasks();
+    async function fetchAndRenderTasks() {
+        tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            allTasks = await response.json();
+            if (!Array.isArray(allTasks)) allTasks = [];
+            renderTasks();
+        } catch (error) {
+            tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL e as permissões.</div>`;
+            console.error('Erro:', error);
+        }
+    }
+
+    taskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = e.target.querySelector('button');
+        btn.textContent = 'Salvando...';
+        btn.disabled = true;
+
+        const taskData = {
+            responsavel: document.getElementById('responsavel').value,
+            titulo: document.getElementById('titulo').value,
+            descricao: document.getElementById('descricao').value,
+            prazo: document.getElementById('prazo').value,
+        };
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData),
+            });
+
+            alert('Tarefa enviada com sucesso! Atualizando a lista...');
+            taskForm.reset();
+            
+            setTimeout(() => {
+                fetchAndRenderTasks();
+            }, 2000);
+
+        } catch (error) {
+            console.error('Erro ao adicionar tarefa:', error);
+            alert('Ocorreu um erro ao enviar a tarefa: ' + error.message);
+        } finally {
+            btn.textContent = 'Adicionar Tarefa';
+            btn.disabled = false;
+        }
     });
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderTasks);
 </script>
 
 </body>
