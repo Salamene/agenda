@@ -70,7 +70,10 @@
     </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-PcUCp0SvhEgC42kHVztxjPHfZKzeYOXs1DhlvBSqxqmAgDxHi8NaPSqxYbpgirdL/exec"; 
+    // ====================================================================
+    // URL FINAL E CORRETA DO SEU SCRIPT
+    // ====================================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXEChp53E_J3TQt5htIU5WcIQ8aBweKBqoomNrxHeLY03B83TTKjqilpAwLEi2C77Ofg/exec"; 
     
     const tasksContainer = document.getElementById('tasks-container' );
     const taskForm = document.getElementById('taskForm');
@@ -83,11 +86,9 @@
     const renderFilterButtons = (sortedDates, activeDateKey) => { dateFilterContainer.innerHTML = ''; const todayKey = getLocalDateKey(new Date()); const todayBtn = document.createElement('button'); todayBtn.className = 'date-filter-btn'; todayBtn.textContent = 'Hoje'; todayBtn.onclick = () => renderTasks(todayKey); if (activeDateKey === todayKey) todayBtn.classList.add('active'); dateFilterContainer.appendChild(todayBtn); const allBtn = document.createElement('button'); allBtn.className = 'date-filter-btn'; allBtn.textContent = 'Todas as Datas'; allBtn.onclick = () => renderTasks(null); if (activeDateKey === null) allBtn.classList.add('active'); dateFilterContainer.appendChild(allBtn); };
     
     // --- LÓGICA DE LEITURA (sem alterações) ---
-    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(getLocalDateKey(new Date())); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error('Erro:', error); } }
+    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(getLocalDateKey(new Date())); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL e as permissões.</div>`; console.error('Erro:', error); } }
 
-    // ====================================================================
-    //  FUNÇÃO DE ENVIO FINAL (USANDO POST)
-    // ====================================================================
+    // --- FUNÇÃO DE ENVIO FINAL (sem alterações) ---
     taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
@@ -102,25 +103,19 @@
         };
 
         try {
-            // O Google Apps Script redireciona requisições POST, então não podemos usar o resultado diretamente.
-            // A solução é enviar os dados e, se não houver erro, assumir que funcionou e recarregar a lista.
-            // O 'mode: no-cors' é necessário para evitar o erro de CORS que o redirecionamento causa.
             await fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Essencial para contornar o problema de redirecionamento do Google
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(taskData),
             });
 
             alert('Tarefa enviada com sucesso! Atualizando a lista...');
             taskForm.reset();
             
-            // Dá um tempo para a planilha ser atualizada antes de buscar os dados novamente
             setTimeout(() => {
                 fetchAndRenderTasks();
-            }, 2000); // 2 segundos de espera
+            }, 2000);
 
         } catch (error) {
             console.error('Erro ao adicionar tarefa:', error);
