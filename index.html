@@ -11,38 +11,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Estilos CSS (sem alterações ) */
-        :root { --bg: #F8F9FA; --card-bg: #FFFFFF; --primary: #4A90E2; --text: #343A40; --text-light: #6C757D; --border: #E9ECEF; --shadow: 0 4px 15px rgba(0, 0, 0, 0.07); }
+        /* ==================================================================== */
+        /* CSS APRIMORADO PARA UM DESIGN MAIS LIMPO E ORGANIZADO              */
+        /* ==================================================================== */
+        :root {
+            --bg: #f4f7f9;
+            --card-bg: #FFFFFF;
+            --primary: #3662E1;
+            --primary-light: #eef2ff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1 ), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --status-pendente-bg: #fffbeb;
+            --status-pendente-text: #b45309;
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
-        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 380px; gap: 30px; align-items: start; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 400px; gap: 40px; align-items: start; }
         @media (max-width: 992px) { .container { grid-template-columns: 1fr; } }
         .card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: var(--shadow); border: 1px solid var(--border); }
         .form-card { position: sticky; top: 40px; }
         h1, h2 { font-weight: 700; margin-bottom: 20px; }
         h1 { font-size: 2.5rem; text-align: center; margin-bottom: 40px; color: var(--primary); }
-        h2 { font-size: 1.5rem; }
+        h2 { font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #CED4DA; border-radius: 8px; font-size: 1rem; }
-        .btn { background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.2s; }
-        .btn:hover { background-color: #357ABD; }
-        #tasks-container { display: flex; flex-direction: column; gap: 25px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #CED4DA; border-radius: 8px; font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); outline: none; }
+        .btn { background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { background-color: #254ac4; transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        
+        /* --- Novo Layout de Abas (Tabs) --- */
+        .tabs-container { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 25px; }
+        .tab-btn { background: none; border: none; padding: 12px 20px; cursor: pointer; font-size: 1rem; font-weight: 500; color: var(--text-light); position: relative; }
+        .tab-btn.active { color: var(--primary); font-weight: 600; }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--primary); }
+        
+        #tasks-container { display: flex; flex-direction: column; gap: 30px; }
         .date-group { }
-        .date-header { font-size: 1.3rem; font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-        .date-header.today { color: #28a745; }
-        .tasks-list { display: grid; gap: 15px; }
-        .task-card { border-left: 5px solid var(--primary); padding: 20px; transition: transform 0.2s, box-shadow 0.2s; }
-        .task-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .task-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .task-title { font-size: 1.2rem; font-weight: 600; }
-        .task-status { background-color: #FFC107; color: #333; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 500; }
-        .task-body { color: var(--text-light); margin-bottom: 15px; }
-        .task-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #ADB5BD; }
+        .date-header { font-size: 1.1rem; font-weight: 600; color: var(--text); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .date-header .fa-calendar-day { color: var(--primary); }
+        .tasks-list { display: grid; gap: 20px; }
+        .task-card { border-left: 4px solid var(--primary); padding: 20px 25px; transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+        .task-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .task-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 5px; }
+        .task-time { font-size: 0.9rem; font-weight: 500; color: var(--primary); }
+        .task-status { background-color: var(--status-pendente-bg); color: var(--status-pendente-text); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .task-body { color: var(--text-light); margin-bottom: 20px; padding-left: 5px; border-left: 2px solid var(--border); }
+        .task-footer { display: flex; align-items: center; font-size: 0.9rem; color: var(--text-light); gap: 8px; }
         .loading { text-align: center; padding: 50px; font-size: 1.5rem; color: var(--text-light); }
-        #date-filter-container { margin-bottom: 20px; text-align: center; }
-        .date-filter-btn { background: none; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; cursor: pointer; margin: 0 5px; font-weight: 500; }
-        .date-filter-btn.active { background-color: var(--primary); color: white; }
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-state .fa-inbox { font-size: 3rem; color: #cbd5e1; margin-bottom: 15px; }
+        .empty-state p { font-size: 1.1rem; color: var(--text-light); }
     </style>
 </head>
 <body>
@@ -52,8 +75,14 @@
     <div class="container">
         <div class="tasks-section">
             <div class="card">
-                <div id="date-filter-container"></div>
-                <div id="tasks-container"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div></div>
+                <div class="tabs-container" id="tabs-container">
+                    <button class="tab-btn active" data-filter="today">Hoje</button>
+                    <button class="tab-btn" data-filter="week">Próximos 7 Dias</button>
+                    <button class="tab-btn" data-filter="all">Todas as Tarefas</button>
+                </div>
+                <div id="tasks-container">
+                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>
+                </div>
             </div>
         </div>
 
@@ -64,29 +93,129 @@
                 <div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" required></div>
                 <div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" rows="3"></textarea></div>
                 <div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" required></div>
-                <button type="submit" class="btn">Adicionar Tarefa</button>
+                <button type="submit" class="btn"><i class="fas fa-paper-plane"></i> Adicionar Tarefa</button>
             </form>
         </div>
     </div>
 
 <script>
     // ====================================================================
-    // URL FINAL E CORRETA DO SEU SCRIPT
+    // JAVASCRIPT COM NOVA LÓGICA DE ABAS (TABS)
+    // A lógica de comunicação com o Google Sheets permanece a mesma.
     // ====================================================================
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXEChp53E_J3TQt5htIU5WcIQ8aBweKBqoomNrxHeLY03B83TTKjqilpAwLEi2C77Ofg/exec"; 
     
     const tasksContainer = document.getElementById('tasks-container' );
     const taskForm = document.getElementById('taskForm');
-    const dateFilterContainer = document.getElementById('date-filter-container');
+    const tabsContainer = document.getElementById('tabs-container');
     let allTasks = [];
+    let activeFilter = 'today'; // Filtro inicial
 
-    // --- LÓGICA DE RENDERIZAÇÃO (sem alterações) ---
     const getLocalDateKey = (date) => { const d = new Date(date); const offset = d.getTimezoneOffset(); const correctedDate = new Date(d.getTime() - (offset*60*1000)); return correctedDate.toISOString().split('T')[0]; };
-    const renderTasks = (filterDateKey = null) => { tasksContainer.innerHTML = ''; const tasksByDate = allTasks.reduce((acc, task) => { const dateKey = getLocalDateKey(task.Prazo); if (!acc[dateKey]) acc[dateKey] = []; acc[dateKey].push(task); return acc; }, {}); const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(b) - new Date(a)); renderFilterButtons(sortedDates, filterDateKey); const datesToDisplay = filterDateKey ? [filterDateKey] : sortedDates; if (datesToDisplay.length === 0 || !tasksByDate[datesToDisplay[0]]) { tasksContainer.innerHTML = `<div class="loading">Nenhuma tarefa encontrada.</div>`; return; } datesToDisplay.forEach(dateKey => { if (!tasksByDate[dateKey]) return; const dateGroup = document.createElement('div'); dateGroup.className = 'date-group'; const todayKey = getLocalDateKey(new Date()); const displayDate = new Date(dateKey + 'T00:00:00'); const dateHeader = document.createElement('h3'); dateHeader.className = 'date-header'; dateHeader.textContent = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }); if (dateKey === todayKey) { dateHeader.classList.add('today'); dateHeader.textContent += " (Hoje)"; } const tasksList = document.createElement('div'); tasksList.className = 'tasks-list'; tasksByDate[dateKey].forEach(task => { const taskCard = document.createElement('div'); taskCard.className = 'card task-card'; const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); taskCard.innerHTML = `<div class="task-header"><span class="task-title">${task.Titulo_Tarefa}</span><span class="task-status">${task.Status}</span></div><div class="task-body">${task.Descricao}</div><div class="task-footer"><span><i class="fas fa-user"></i> ${task.Responsavel}</span><span><i class="fas fa-clock"></i> ${prazo}</span></div>`; tasksList.appendChild(taskCard); }); dateGroup.appendChild(dateHeader); dateGroup.appendChild(tasksList); tasksContainer.appendChild(dateGroup); }); };
-    const renderFilterButtons = (sortedDates, activeDateKey) => { dateFilterContainer.innerHTML = ''; const todayKey = getLocalDateKey(new Date()); const todayBtn = document.createElement('button'); todayBtn.className = 'date-filter-btn'; todayBtn.textContent = 'Hoje'; todayBtn.onclick = () => renderTasks(todayKey); if (activeDateKey === todayKey) todayBtn.classList.add('active'); dateFilterContainer.appendChild(todayBtn); const allBtn = document.createElement('button'); allBtn.className = 'date-filter-btn'; allBtn.textContent = 'Todas as Datas'; allBtn.onclick = () => renderTasks(null); if (activeDateKey === null) allBtn.classList.add('active'); dateFilterContainer.appendChild(allBtn); };
+
+    const renderTasks = () => {
+        tasksContainer.innerHTML = '';
+
+        const today = new Date();
+        const todayKey = getLocalDateKey(today);
+        const nextWeek = new Date(today);
+        nextWeek.setDate(today.getDate() + 7);
+
+        // 1. Filtra as tarefas de acordo com a aba ativa
+        let filteredTasks = [];
+        if (activeFilter === 'today') {
+            filteredTasks = allTasks.filter(task => getLocalDateKey(task.Prazo) === todayKey);
+        } else if (activeFilter === 'week') {
+            filteredTasks = allTasks.filter(task => {
+                const taskDate = new Date(task.Prazo);
+                return taskDate >= today && taskDate <= nextWeek;
+            });
+        } else {
+            filteredTasks = allTasks;
+        }
+
+        // 2. Agrupa as tarefas filtradas por data
+        const tasksByDate = filteredTasks.reduce((acc, task) => {
+            const dateKey = getLocalDateKey(task.Prazo);
+            if (!acc[dateKey]) acc[dateKey] = [];
+            acc[dateKey].push(task);
+            return acc;
+        }, {});
+
+        // 3. Ordena as datas (mais próximas primeiro)
+        const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(a) - new Date(b));
+        
+        if (sortedDates.length === 0) {
+             tasksContainer.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma tarefa para esta visualização.</p></div>`;
+             return;
+        }
+
+        // 4. Cria os grupos de tarefas no HTML
+        sortedDates.forEach(dateKey => {
+            const dateGroup = document.createElement('div');
+            dateGroup.className = 'date-group';
+            const displayDate = new Date(dateKey + 'T00:00:00');
+            const dateHeader = document.createElement('h3');
+            dateHeader.className = 'date-header';
+            
+            let dateText = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+            if (dateKey === todayKey) {
+                dateText += " (Hoje)";
+                dateHeader.style.color = '#16a34a'; // Verde para hoje
+            }
+            dateHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${dateText}`;
+
+            const tasksList = document.createElement('div');
+            tasksList.className = 'tasks-list';
+
+            tasksByDate[dateKey].sort((a, b) => new Date(a.Prazo) - new Date(b.Prazo)).forEach(task => {
+                const taskCard = document.createElement('div');
+                taskCard.className = 'card task-card';
+                const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                taskCard.innerHTML = `
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.Titulo_Tarefa}</div>
+                            <div class="task-time"><i class="far fa-clock"></i> ${prazo}</div>
+                        </div>
+                        <span class="task-status">${task.Status}</span>
+                    </div>
+                    <div class="task-body">${task.Descricao || '<i>Sem descrição.</i>'}</div>
+                    <div class="task-footer">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${task.Responsavel}</span>
+                    </div>`;
+                tasksList.appendChild(taskCard);
+            });
+
+            dateGroup.appendChild(dateHeader);
+            dateGroup.appendChild(tasksList);
+            tasksContainer.appendChild(dateGroup);
+        });
+    };
     
-    // --- LÓGICA DE LEITURA (sem alterações) ---
-    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(getLocalDateKey(new Date())); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL e as permissões.</div>`; console.error('Erro:', error); } }
+    // Lógica para trocar de aba
+    tabsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tab-btn')) {
+            tabsContainer.querySelector('.active').classList.remove('active');
+            e.target.classList.add('active');
+            activeFilter = e.target.dataset.filter;
+            renderTasks();
+        }
+    });
+
+    async function fetchAndRenderTasks() {
+        tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            allTasks = await response.json();
+            if (!Array.isArray(allTasks)) allTasks = [];
+            renderTasks(); // Renderiza a visualização inicial (Hoje)
+        } catch (error) {
+            tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL e as permissões.</div>`;
+            console.error('Erro:', error);
+        }
+    }
 
     // --- FUNÇÃO DE ENVIO FINAL (sem alterações) ---
     taskForm.addEventListener('submit', async (e) => {
@@ -110,7 +239,7 @@
                 body: JSON.stringify(taskData),
             });
 
-            alert('Tarefa enviada com sucesso! Atualizando a lista...');
+            alert('Tarefa adicionada com sucesso! Atualizando a lista...');
             taskForm.reset();
             
             setTimeout(() => {
