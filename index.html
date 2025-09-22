@@ -1,7 +1,3 @@
-<!-- ==================================================================== -->
-<!-- ARQUIVO 2: PÁGINA DA AGENDA (HTML FINAL E FUNCIONAL)                -->
-<!-- ==================================================================== -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -15,7 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --bg: #F8F9FA; --card-bg: #FFFFFF; --primary: #4A90E2; --text: #343A40; --text-light: #6C757D; --border: #E9ECEF; --shadow: 0 4px 15px rgba(0, 0, 0, 0.07 ); }
+        /* Estilos CSS (sem alterações ) */
+        :root { --bg: #F8F9FA; --card-bg: #FFFFFF; --primary: #4A90E2; --text: #343A40; --text-light: #6C757D; --border: #E9ECEF; --shadow: 0 4px 15px rgba(0, 0, 0, 0.07); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
         .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 380px; gap: 30px; align-items: start; }
@@ -73,7 +70,6 @@
     </div>
 
 <script>
-    // !!! COLE A URL DO SEU NOVO DEPLOY AQUI !!!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-PcUCp0SvhEgC42kHVztxjPHfZKzeYOXs1DhlvBSqxqmAgDxHi8NaPSqxYbpgirdL/exec"; 
     
     const tasksContainer = document.getElementById('tasks-container' );
@@ -81,138 +77,56 @@
     const dateFilterContainer = document.getElementById('date-filter-container');
     let allTasks = [];
 
-    const getLocalDateKey = (date) => {
-        const d = new Date(date);
-        const offset = d.getTimezoneOffset();
-        const correctedDate = new Date(d.getTime() - (offset*60*1000));
-        return correctedDate.toISOString().split('T')[0];
-    };
-
-    const renderTasks = (filterDateKey = null) => {
-        tasksContainer.innerHTML = '';
-        const tasksByDate = allTasks.reduce((acc, task) => {
-            const dateKey = getLocalDateKey(task.Prazo);
-            if (!acc[dateKey]) acc[dateKey] = [];
-            acc[dateKey].push(task);
-            return acc;
-        }, {});
-        const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(b) - new Date(a));
-        renderFilterButtons(sortedDates, filterDateKey);
-        const datesToDisplay = filterDateKey ? [filterDateKey] : sortedDates;
-        if (datesToDisplay.length === 0 || !tasksByDate[datesToDisplay[0]]) {
-             tasksContainer.innerHTML = `<div class="loading">Nenhuma tarefa encontrada.</div>`;
-             return;
-        }
-        datesToDisplay.forEach(dateKey => {
-            if (!tasksByDate[dateKey]) return;
-            const dateGroup = document.createElement('div');
-            dateGroup.className = 'date-group';
-            const todayKey = getLocalDateKey(new Date());
-            const displayDate = new Date(dateKey + 'T00:00:00');
-            const dateHeader = document.createElement('h3');
-            dateHeader.className = 'date-header';
-            dateHeader.textContent = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-            if (dateKey === todayKey) {
-                dateHeader.classList.add('today');
-                dateHeader.textContent += " (Hoje)";
-            }
-            const tasksList = document.createElement('div');
-            tasksList.className = 'tasks-list';
-            tasksByDate[dateKey].forEach(task => {
-                const taskCard = document.createElement('div');
-                taskCard.className = 'card task-card';
-                const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                taskCard.innerHTML = `
-                    <div class="task-header"><span class="task-title">${task.Titulo_Tarefa}</span><span class="task-status">${task.Status}</span></div>
-                    <div class="task-body">${task.Descricao}</div>
-                    <div class="task-footer"><span><i class="fas fa-user"></i> ${task.Responsavel}</span><span><i class="fas fa-clock"></i> ${prazo}</span></div>`;
-                tasksList.appendChild(taskCard);
-            });
-            dateGroup.appendChild(dateHeader);
-            dateGroup.appendChild(tasksList);
-            tasksContainer.appendChild(dateGroup);
-        });
-    };
+    // --- LÓGICA DE RENDERIZAÇÃO (sem alterações) ---
+    const getLocalDateKey = (date) => { const d = new Date(date); const offset = d.getTimezoneOffset(); const correctedDate = new Date(d.getTime() - (offset*60*1000)); return correctedDate.toISOString().split('T')[0]; };
+    const renderTasks = (filterDateKey = null) => { tasksContainer.innerHTML = ''; const tasksByDate = allTasks.reduce((acc, task) => { const dateKey = getLocalDateKey(task.Prazo); if (!acc[dateKey]) acc[dateKey] = []; acc[dateKey].push(task); return acc; }, {}); const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(b) - new Date(a)); renderFilterButtons(sortedDates, filterDateKey); const datesToDisplay = filterDateKey ? [filterDateKey] : sortedDates; if (datesToDisplay.length === 0 || !tasksByDate[datesToDisplay[0]]) { tasksContainer.innerHTML = `<div class="loading">Nenhuma tarefa encontrada.</div>`; return; } datesToDisplay.forEach(dateKey => { if (!tasksByDate[dateKey]) return; const dateGroup = document.createElement('div'); dateGroup.className = 'date-group'; const todayKey = getLocalDateKey(new Date()); const displayDate = new Date(dateKey + 'T00:00:00'); const dateHeader = document.createElement('h3'); dateHeader.className = 'date-header'; dateHeader.textContent = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' }); if (dateKey === todayKey) { dateHeader.classList.add('today'); dateHeader.textContent += " (Hoje)"; } const tasksList = document.createElement('div'); tasksList.className = 'tasks-list'; tasksByDate[dateKey].forEach(task => { const taskCard = document.createElement('div'); taskCard.className = 'card task-card'; const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); taskCard.innerHTML = `<div class="task-header"><span class="task-title">${task.Titulo_Tarefa}</span><span class="task-status">${task.Status}</span></div><div class="task-body">${task.Descricao}</div><div class="task-footer"><span><i class="fas fa-user"></i> ${task.Responsavel}</span><span><i class="fas fa-clock"></i> ${prazo}</span></div>`; tasksList.appendChild(taskCard); }); dateGroup.appendChild(dateHeader); dateGroup.appendChild(tasksList); tasksContainer.appendChild(dateGroup); }); };
+    const renderFilterButtons = (sortedDates, activeDateKey) => { dateFilterContainer.innerHTML = ''; const todayKey = getLocalDateKey(new Date()); const todayBtn = document.createElement('button'); todayBtn.className = 'date-filter-btn'; todayBtn.textContent = 'Hoje'; todayBtn.onclick = () => renderTasks(todayKey); if (activeDateKey === todayKey) todayBtn.classList.add('active'); dateFilterContainer.appendChild(todayBtn); const allBtn = document.createElement('button'); allBtn.className = 'date-filter-btn'; allBtn.textContent = 'Todas as Datas'; allBtn.onclick = () => renderTasks(null); if (activeDateKey === null) allBtn.classList.add('active'); dateFilterContainer.appendChild(allBtn); };
     
-    const renderFilterButtons = (sortedDates, activeDateKey) => {
-        dateFilterContainer.innerHTML = '';
-        const todayKey = getLocalDateKey(new Date());
-        const todayBtn = document.createElement('button');
-        todayBtn.className = 'date-filter-btn';
-        todayBtn.textContent = 'Hoje';
-        todayBtn.onclick = () => renderTasks(todayKey);
-        if (activeDateKey === todayKey) todayBtn.classList.add('active');
-        dateFilterContainer.appendChild(todayBtn);
-        const allBtn = document.createElement('button');
-        allBtn.className = 'date-filter-btn';
-        allBtn.textContent = 'Todas as Datas';
-        allBtn.onclick = () => renderTasks(null);
-        if (activeDateKey === null) allBtn.classList.add('active');
-        dateFilterContainer.appendChild(allBtn);
-    };
-
-    async function fetchAndRenderTasks() {
-        tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`;
-        try {
-            const response = await fetch(SCRIPT_URL);
-            allTasks = await response.json();
-            if (!Array.isArray(allTasks)) allTasks = [];
-            renderTasks(getLocalDateKey(new Date()));
-        } catch (error) {
-            tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL do script e as permissões.</div>`;
-            console.error('Erro:', error);
-        }
-    }
+    // --- LÓGICA DE LEITURA (sem alterações) ---
+    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(getLocalDateKey(new Date())); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error('Erro:', error); } }
 
     // ====================================================================
-    //  FUNÇÃO DE ENVIO 100% FUNCIONAL
+    //  NOVA FUNÇÃO DE ENVIO (POR REDIRECIONAMENTO)
     // ====================================================================
-    taskForm.addEventListener('submit', async (e) => {
+    taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         btn.textContent = 'Salvando...';
         btn.disabled = true;
 
-        // Cria um objeto com os dados do formulário
-        const taskData = {
-            responsavel: document.getElementById('responsavel').value,
-            titulo: document.getElementById('titulo').value,
-            descricao: document.getElementById('descricao').value,
-            prazo: document.getElementById('prazo').value,
-        };
+        // 1. Pega os dados do formulário
+        const responsavel = document.getElementById('responsavel').value;
+        const titulo = document.getElementById('titulo').value;
+        const descricao = document.getElementById('descricao').value;
+        const prazo = document.getElementById('prazo').value;
 
-        try {
-            // Envia os dados como JSON para o Google Script
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(taskData),
-                // Removemos o 'mode: no-cors' para poder ler a resposta do servidor
-            });
+        // 2. Constrói a URL de salvamento
+        let saveUrl = SCRIPT_URL + "?action=addTask";
+        saveUrl += "&responsavel=" + encodeURIComponent(responsavel);
+        saveUrl += "&titulo=" + encodeURIComponent(titulo);
+        saveUrl += "&descricao=" + encodeURIComponent(descricao);
+        saveUrl += "&prazo=" + encodeURIComponent(prazo);
 
-            const result = await response.json();
-
-            if (result.status === 'success') {
-                alert('Tarefa adicionada com sucesso!');
-                taskForm.reset();
-                // Atualiza a lista de tarefas para mostrar a nova entrada
-                fetchAndRenderTasks();
-            } else {
-                throw new Error(result.message || 'Erro desconhecido ao salvar.');
-            }
-
-        } catch (error) {
-            console.error('Erro ao adicionar tarefa:', error);
-            alert('Ocorreu um erro ao salvar a tarefa: ' + error.message);
-        } finally {
-            btn.textContent = 'Adicionar Tarefa';
-            btn.disabled = false;
-        }
+        // 3. Redireciona o navegador para a URL de salvamento
+        window.location.href = saveUrl;
     });
 
-    document.addEventListener('DOMContentLoaded', fetchAndRenderTasks);
+    // --- LÓGICA DE INICIALIZAÇÃO ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Verifica se a URL tem um status de retorno do script
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('status') === 'success') {
+            alert('Tarefa adicionada com sucesso!');
+            // Limpa a URL para não mostrar o alerta de novo ao recarregar
+            window.history.replaceState({}, document.title, "/");
+        } else if (params.get('status') === 'error') {
+            alert('Erro ao salvar: ' + params.get('message'));
+            window.history.replaceState({}, document.title, "/");
+        }
+
+        // Carrega as tarefas
+        fetchAndRenderTasks();
+    });
 </script>
 
 </body>
