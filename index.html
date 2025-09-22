@@ -86,47 +86,52 @@
     async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(getLocalDateKey(new Date())); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error('Erro:', error); } }
 
     // ====================================================================
-    //  NOVA FUNÇÃO DE ENVIO (POR REDIRECIONAMENTO)
+    //  FUNÇÃO DE ENVIO FINAL (USANDO POST)
     // ====================================================================
-    taskForm.addEventListener('submit', (e) => {
+    taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         btn.textContent = 'Salvando...';
         btn.disabled = true;
 
-        // 1. Pega os dados do formulário
-        const responsavel = document.getElementById('responsavel').value;
-        const titulo = document.getElementById('titulo').value;
-        const descricao = document.getElementById('descricao').value;
-        const prazo = document.getElementById('prazo').value;
+        const taskData = {
+            responsavel: document.getElementById('responsavel').value,
+            titulo: document.getElementById('titulo').value,
+            descricao: document.getElementById('descricao').value,
+            prazo: document.getElementById('prazo').value,
+        };
 
-        // 2. Constrói a URL de salvamento
-        let saveUrl = SCRIPT_URL + "?action=addTask";
-        saveUrl += "&responsavel=" + encodeURIComponent(responsavel);
-        saveUrl += "&titulo=" + encodeURIComponent(titulo);
-        saveUrl += "&descricao=" + encodeURIComponent(descricao);
-        saveUrl += "&prazo=" + encodeURIComponent(prazo);
+        try {
+            // O Google Apps Script redireciona requisições POST, então não podemos usar o resultado diretamente.
+            // A solução é enviar os dados e, se não houver erro, assumir que funcionou e recarregar a lista.
+            // O 'mode: no-cors' é necessário para evitar o erro de CORS que o redirecionamento causa.
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Essencial para contornar o problema de redirecionamento do Google
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(taskData),
+            });
 
-        // 3. Redireciona o navegador para a URL de salvamento
-        window.location.href = saveUrl;
-    });
+            alert('Tarefa enviada com sucesso! Atualizando a lista...');
+            taskForm.reset();
+            
+            // Dá um tempo para a planilha ser atualizada antes de buscar os dados novamente
+            setTimeout(() => {
+                fetchAndRenderTasks();
+            }, 2000); // 2 segundos de espera
 
-    // --- LÓGICA DE INICIALIZAÇÃO ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // Verifica se a URL tem um status de retorno do script
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('status') === 'success') {
-            alert('Tarefa adicionada com sucesso!');
-            // Limpa a URL para não mostrar o alerta de novo ao recarregar
-            window.history.replaceState({}, document.title, "/");
-        } else if (params.get('status') === 'error') {
-            alert('Erro ao salvar: ' + params.get('message'));
-            window.history.replaceState({}, document.title, "/");
+        } catch (error) {
+            console.error('Erro ao adicionar tarefa:', error);
+            alert('Ocorreu um erro ao enviar a tarefa: ' + error.message);
+        } finally {
+            btn.textContent = 'Adicionar Tarefa';
+            btn.disabled = false;
         }
-
-        // Carrega as tarefas
-        fetchAndRenderTasks();
     });
+
+    document.addEventListener('DOMContentLoaded', fetchAndRenderTasks);
 </script>
 
 </body>
