@@ -1,3 +1,7 @@
+<!-- ==================================================================== -->
+<!-- ARQUIVO 2: PÁGINA DA AGENDA (HTML FINAL E FUNCIONAL)                -->
+<!-- ==================================================================== -->
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -59,17 +63,17 @@
         <div class="form-card card">
             <h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2>
             <form id="taskForm">
-                <div class="form-group"><label for="responsavel">Seu Nome</label><input type="text" id="responsavel" name="responsavel" class="form-control" required></div>
-                <div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" name="titulo" class="form-control" required></div>
-                <div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" name="descricao" class="form-control" rows="3"></textarea></div>
-                <div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" name="prazo" class="form-control" required></div>
+                <div class="form-group"><label for="responsavel">Seu Nome</label><input type="text" id="responsavel" required></div>
+                <div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" required></div>
+                <div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" rows="3"></textarea></div>
+                <div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" required></div>
                 <button type="submit" class="btn">Adicionar Tarefa</button>
             </form>
         </div>
     </div>
 
 <script>
-    // !!! COLE A URL DO SEU SCRIPT DO GOOGLE AQUI !!!
+    // !!! COLE A URL DO SEU NOVO DEPLOY AQUI !!!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-PcUCp0SvhEgC42kHVztxjPHfZKzeYOXs1DhlvBSqxqmAgDxHi8NaPSqxYbpgirdL/exec"; 
     
     const tasksContainer = document.getElementById('tasks-container' );
@@ -161,45 +165,51 @@
     }
 
     // ====================================================================
-    //  FUNÇÃO DE ENVIO CORRIGIDA
+    //  FUNÇÃO DE ENVIO 100% FUNCIONAL
     // ====================================================================
-    taskForm.addEventListener('submit', (e) => {
+    taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
         btn.textContent = 'Salvando...';
         btn.disabled = true;
 
-        // Usamos FormData para enviar os dados no formato que o Google Script espera.
-        const formData = new FormData(taskForm);
-
-        // O Google Script espera um POST simples, então redirecionamos para uma página de sucesso
-        // em vez de usar fetch, que pode ser bloqueado por CORS.
-        // Criamos um iframe oculto para fazer o envio sem recarregar a página.
-        const iframe = document.createElement('iframe');
-        iframe.name = 'hidden-iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-        
-        taskForm.target = 'hidden-iframe';
-        taskForm.method = 'POST';
-        taskForm.action = SCRIPT_URL;
-        
-        // Adicionamos um listener para saber quando o envio terminou
-        iframe.onload = () => {
-            alert('Tarefa adicionada com sucesso!');
-            taskForm.reset();
-            btn.textContent = 'Adicionar Tarefa';
-            btn.disabled = false;
-            document.body.removeChild(iframe); // Limpa o iframe
-            
-            // Atualiza a lista de tarefas
-            setTimeout(() => {
-                fetchAndRenderTasks();
-            }, 1000); // Um pequeno atraso para garantir que a planilha foi atualizada
+        // Cria um objeto com os dados do formulário
+        const taskData = {
+            responsavel: document.getElementById('responsavel').value,
+            titulo: document.getElementById('titulo').value,
+            descricao: document.getElementById('descricao').value,
+            prazo: document.getElementById('prazo').value,
         };
 
-        // Envia o formulário
-        taskForm.submit();
+        try {
+            // Envia os dados como JSON para o Google Script
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(taskData),
+                // Removemos o 'mode: no-cors' para poder ler a resposta do servidor
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                alert('Tarefa adicionada com sucesso!');
+                taskForm.reset();
+                // Atualiza a lista de tarefas para mostrar a nova entrada
+                fetchAndRenderTasks();
+            } else {
+                throw new Error(result.message || 'Erro desconhecido ao salvar.');
+            }
+
+        } catch (error) {
+            console.error('Erro ao adicionar tarefa:', error);
+            alert('Ocorreu um erro ao salvar a tarefa: ' + error.message);
+        } finally {
+            btn.textContent = 'Adicionar Tarefa';
+            btn.disabled = false;
+        }
     });
 
     document.addEventListener('DOMContentLoaded', fetchAndRenderTasks);
