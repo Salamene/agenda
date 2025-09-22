@@ -26,8 +26,6 @@
         .form-control { width: 100%; padding: 12px; border: 1px solid #CED4DA; border-radius: 8px; font-size: 1rem; }
         .btn { background-color: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.2s; }
         .btn:hover { background-color: #357ABD; }
-        
-        /* Estilos da Agenda Inteligente */
         #tasks-container { display: flex; flex-direction: column; gap: 25px; }
         .date-group { }
         .date-header { font-size: 1.3rem; font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
@@ -53,22 +51,18 @@
     <div class="container">
         <div class="tasks-section">
             <div class="card">
-                <div id="date-filter-container">
-                    <!-- Botões de filtro serão inseridos aqui -->
-                </div>
-                <div id="tasks-container">
-                    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>
-                </div>
+                <div id="date-filter-container"></div>
+                <div id="tasks-container"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div></div>
             </div>
         </div>
 
         <div class="form-card card">
             <h2><i class="fas fa-plus-circle"></i> Nova Tarefa</h2>
             <form id="taskForm">
-                <div class="form-group"><label for="responsavel">Seu Nome</label><input type="text" id="responsavel" class="form-control" required></div>
-                <div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" class="form-control" required></div>
-                <div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" class="form-control" rows="3"></textarea></div>
-                <div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" class="form-control" required></div>
+                <div class="form-group"><label for="responsavel">Seu Nome</label><input type="text" id="responsavel" name="responsavel" class="form-control" required></div>
+                <div class="form-group"><label for="titulo">Título da Tarefa</label><input type="text" id="titulo" name="titulo" class="form-control" required></div>
+                <div class="form-group"><label for="descricao">Descrição</label><textarea id="descricao" name="descricao" class="form-control" rows="3"></textarea></div>
+                <div class="form-group"><label for="prazo">Prazo</label><input type="datetime-local" id="prazo" name="prazo" class="form-control" required></div>
                 <button type="submit" class="btn">Adicionar Tarefa</button>
             </form>
         </div>
@@ -76,14 +70,13 @@
 
 <script>
     // !!! COLE A URL DO SEU SCRIPT DO GOOGLE AQUI !!!
-    const SCRIPT_URL = "SUA_URL_AQUI"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-PcUCp0SvhEgC42kHVztxjPHfZKzeYOXs1DhlvBSqxqmAgDxHi8NaPSqxYbpgirdL/exec"; 
     
-    const tasksContainer = document.getElementById('tasks-container');
+    const tasksContainer = document.getElementById('tasks-container' );
     const taskForm = document.getElementById('taskForm');
     const dateFilterContainer = document.getElementById('date-filter-container');
-    let allTasks = []; // Armazena todas as tarefas para filtragem rápida
+    let allTasks = [];
 
-    // Função para formatar a data no formato YYYY-MM-DD para agrupamento
     const getLocalDateKey = (date) => {
         const d = new Date(date);
         const offset = d.getTimezoneOffset();
@@ -91,147 +84,124 @@
         return correctedDate.toISOString().split('T')[0];
     };
 
-    // Função para renderizar (desenhar) as tarefas na tela
     const renderTasks = (filterDateKey = null) => {
         tasksContainer.innerHTML = '';
-
-        // 1. Agrupar tarefas por data
         const tasksByDate = allTasks.reduce((acc, task) => {
             const dateKey = getLocalDateKey(task.Prazo);
-            if (!acc[dateKey]) {
-                acc[dateKey] = [];
-            }
+            if (!acc[dateKey]) acc[dateKey] = [];
             acc[dateKey].push(task);
             return acc;
         }, {});
-
-        // 2. Ordenar as datas (mais recentes primeiro)
         const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(b) - new Date(a));
-
-        // 3. Renderizar os botões de filtro
         renderFilterButtons(sortedDates, filterDateKey);
-
-        // 4. Filtrar as datas a serem exibidas
         const datesToDisplay = filterDateKey ? [filterDateKey] : sortedDates;
-        
         if (datesToDisplay.length === 0 || !tasksByDate[datesToDisplay[0]]) {
              tasksContainer.innerHTML = `<div class="loading">Nenhuma tarefa encontrada.</div>`;
              return;
         }
-
-        // 5. Criar os grupos de tarefas no HTML
         datesToDisplay.forEach(dateKey => {
             if (!tasksByDate[dateKey]) return;
-
             const dateGroup = document.createElement('div');
             dateGroup.className = 'date-group';
-
             const todayKey = getLocalDateKey(new Date());
             const displayDate = new Date(dateKey + 'T00:00:00');
             const dateHeader = document.createElement('h3');
             dateHeader.className = 'date-header';
             dateHeader.textContent = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-            
             if (dateKey === todayKey) {
                 dateHeader.classList.add('today');
                 dateHeader.textContent += " (Hoje)";
             }
-
             const tasksList = document.createElement('div');
             tasksList.className = 'tasks-list';
-
             tasksByDate[dateKey].forEach(task => {
                 const taskCard = document.createElement('div');
                 taskCard.className = 'card task-card';
                 const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                 taskCard.innerHTML = `
-                    <div class="task-header">
-                        <span class="task-title">${task.Titulo_Tarefa}</span>
-                        <span class="task-status">${task.Status}</span>
-                    </div>
+                    <div class="task-header"><span class="task-title">${task.Titulo_Tarefa}</span><span class="task-status">${task.Status}</span></div>
                     <div class="task-body">${task.Descricao}</div>
-                    <div class="task-footer">
-                        <span><i class="fas fa-user"></i> ${task.Responsavel}</span>
-                        <span><i class="fas fa-clock"></i> ${prazo}</span>
-                    </div>
-                `;
+                    <div class="task-footer"><span><i class="fas fa-user"></i> ${task.Responsavel}</span><span><i class="fas fa-clock"></i> ${prazo}</span></div>`;
                 tasksList.appendChild(taskCard);
             });
-
             dateGroup.appendChild(dateHeader);
             dateGroup.appendChild(tasksList);
             tasksContainer.appendChild(dateGroup);
         });
     };
     
-    // Função para criar os botões de filtro
     const renderFilterButtons = (sortedDates, activeDateKey) => {
         dateFilterContainer.innerHTML = '';
         const todayKey = getLocalDateKey(new Date());
-        
-        // Botão "Hoje"
         const todayBtn = document.createElement('button');
         todayBtn.className = 'date-filter-btn';
         todayBtn.textContent = 'Hoje';
         todayBtn.onclick = () => renderTasks(todayKey);
         if (activeDateKey === todayKey) todayBtn.classList.add('active');
         dateFilterContainer.appendChild(todayBtn);
-
-        // Botão "Todas"
         const allBtn = document.createElement('button');
         allBtn.className = 'date-filter-btn';
         allBtn.textContent = 'Todas as Datas';
         allBtn.onclick = () => renderTasks(null);
         if (activeDateKey === null) allBtn.classList.add('active');
-        dateFilter-container.appendChild(allBtn);
+        dateFilterContainer.appendChild(allBtn);
     };
 
-    // Função principal para buscar os dados da planilha
     async function fetchAndRenderTasks() {
         tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`;
         try {
             const response = await fetch(SCRIPT_URL);
             allTasks = await response.json();
-            
             if (!Array.isArray(allTasks)) allTasks = [];
-
-            // Por padrão, mostra apenas as tarefas de hoje
             renderTasks(getLocalDateKey(new Date()));
-
         } catch (error) {
             tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas. Verifique a URL do script e as permissões.</div>`;
             console.error('Erro:', error);
         }
     }
 
-    // Adicionar uma nova tarefa
-    taskForm.addEventListener('submit', async (e) => {
+    // ====================================================================
+    //  FUNÇÃO DE ENVIO CORRIGIDA
+    // ====================================================================
+    taskForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button');
-        btn.textContent = 'Adicionando...';
+        btn.textContent = 'Salvando...';
         btn.disabled = true;
 
-        const taskData = {
-            responsavel: document.getElementById('responsavel').value,
-            titulo: document.getElementById('titulo').value,
-            descricao: document.getElementById('descricao').value,
-            prazo: document.getElementById('prazo').value,
-        };
+        // Usamos FormData para enviar os dados no formato que o Google Script espera.
+        const formData = new FormData(taskForm);
 
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(taskData) });
-            taskForm.reset();
+        // O Google Script espera um POST simples, então redirecionamos para uma página de sucesso
+        // em vez de usar fetch, que pode ser bloqueado por CORS.
+        // Criamos um iframe oculto para fazer o envio sem recarregar a página.
+        const iframe = document.createElement('iframe');
+        iframe.name = 'hidden-iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        taskForm.target = 'hidden-iframe';
+        taskForm.method = 'POST';
+        taskForm.action = SCRIPT_URL;
+        
+        // Adicionamos um listener para saber quando o envio terminou
+        iframe.onload = () => {
             alert('Tarefa adicionada com sucesso!');
-            setTimeout(() => { fetchAndRenderTasks(); }, 1500);
-        } catch (error) {
-            alert('Ocorreu um erro ao adicionar a tarefa.');
-        } finally {
+            taskForm.reset();
             btn.textContent = 'Adicionar Tarefa';
             btn.disabled = false;
-        }
+            document.body.removeChild(iframe); // Limpa o iframe
+            
+            // Atualiza a lista de tarefas
+            setTimeout(() => {
+                fetchAndRenderTasks();
+            }, 1000); // Um pequeno atraso para garantir que a planilha foi atualizada
+        };
+
+        // Envia o formulário
+        taskForm.submit();
     });
 
-    // Carrega tudo ao iniciar a página
     document.addEventListener('DOMContentLoaded', fetchAndRenderTasks);
 </script>
 
