@@ -30,7 +30,7 @@
         .tabs-container { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 25px; }
         .tab-btn { background: none; border: none; padding: 12px 20px; cursor: pointer; font-size: 1rem; font-weight: 500; color: var(--text-light); position: relative; }
         .tab-btn.active { color: var(--primary); font-weight: 600; }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--primary); }
+        .tab-btn.active::after { content: ""; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: var(--primary); }
         #tasks-container { display: flex; flex-direction: column; gap: 30px; }
         .date-group { }
         .date-header { font-size: 1.1rem; font-weight: 600; color: var(--text); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -77,58 +77,58 @@
     <footer class="footer">DESENVOLVIDO NA SEMED LEANDRO SALAMENE</footer>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXEChp53E_J3TQt5htIU5WcIQ8aBweKBqoomNrxHeLY03B83TTKjqilpAwLEi2C77Ofg/exec"; 
-    const tasksContainer = document.getElementById('tasks-container' );
-    const taskForm = document.getElementById('taskForm');
-    const tabsContainer = document.getElementById('tabs-container');
-    const userGreetingDiv = document.getElementById('user-greeting');
-    const responsavelInput = document.getElementById('responsavel');
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6ipSftEtew0Xp1ubJZwPvFsHcT_88Ch9PrhGylaUGrjP_KHudbvkqfKNP_WHWNyo41w/exec"; 
+    const tasksContainer = document.getElementById("tasks-container" );
+    const taskForm = document.getElementById("taskForm");
+    const tabsContainer = document.getElementById("tabs-container");
+    const userGreetingDiv = document.getElementById("user-greeting");
+    const responsavelInput = document.getElementById("responsavel");
     let allTasks = [];
-    let activeFilter = 'today';
-    let currentUser = '';
+    let activeFilter = "today";
+    let currentUser = "";
 
-    function identifyUser() { let userName = localStorage.getItem('agendaUserName'); if (!userName) { userName = prompt("Bem-vindo(a)! Por favor, digite seu nome para continuar:"); if (!userName) { userName = "Visitante"; } localStorage.setItem('agendaUserName', userName); } currentUser = userName; userGreetingDiv.innerHTML = `Olá, <span>${currentUser}</span>! <button id="change-user-btn">Trocar de usuário</button>`; userGreetingDiv.style.display = 'block'; responsavelInput.value = currentUser; document.getElementById('change-user-btn').addEventListener('click', () => { localStorage.removeItem('agendaUserName'); identifyUser(); renderTasks(); }); }
-    const getLocalDateKey = (date) => { const d = new Date(date); const offset = d.getTimezoneOffset(); const correctedDate = new Date(d.getTime() - (offset*60*1000)); return correctedDate.toISOString().split('T')[0]; };
+    function identifyUser() { let userName = localStorage.getItem("agendaUserName"); if (!userName) { userName = prompt("Bem-vindo(a)! Por favor, digite seu nome para continuar:"); if (!userName) { userName = "Visitante"; } localStorage.setItem("agendaUserName", userName); } currentUser = userName; userGreetingDiv.innerHTML = `Olá, <span>${currentUser}</span>! <button id="change-user-btn">Trocar de usuário</button>`; userGreetingDiv.style.display = "block"; responsavelInput.value = currentUser; document.getElementById("change-user-btn").addEventListener("click", () => { localStorage.removeItem("agendaUserName"); identifyUser(); renderTasks(); }); }
+    const getLocalDateKey = (date) => { const d = new Date(date); const offset = d.getTimezoneOffset(); const correctedDate = new Date(d.getTime() - (offset*60*1000)); return correctedDate.toISOString().split("T")[0]; };
 
     const renderTasks = () => {
-        tasksContainer.innerHTML = '';
+        tasksContainer.innerHTML = "";
         const today = new Date();
         const todayKey = getLocalDateKey(today);
         const nextWeek = new Date(today);
         nextWeek.setDate(today.getDate() + 7);
         let filteredTasks = [];
-        if (activeFilter === 'today') { filteredTasks = allTasks.filter(task => getLocalDateKey(task.Prazo) === todayKey); } 
-        else if (activeFilter === 'week') { filteredTasks = allTasks.filter(task => { const taskDate = new Date(task.Prazo); return taskDate >= today && taskDate <= nextWeek; }); } 
+        if (activeFilter === "today") { filteredTasks = allTasks.filter(task => getLocalDateKey(task.Prazo) === todayKey); } 
+        else if (activeFilter === "week") { filteredTasks = allTasks.filter(task => { const taskDate = new Date(task.Prazo); return taskDate >= today && taskDate <= nextWeek; }); } 
         else { filteredTasks = allTasks; }
         const tasksByDate = filteredTasks.reduce((acc, task) => { const dateKey = getLocalDateKey(task.Prazo); if (!acc[dateKey]) acc[dateKey] = []; acc[dateKey].push(task); return acc; }, {});
         const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(a) - new Date(b));
         if (sortedDates.length === 0) { tasksContainer.innerHTML = `<div class="empty-state"><i class="fas fa-inbox"></i><p>Nenhuma tarefa para esta visualização.</p></div>`; return; }
         sortedDates.forEach(dateKey => {
-            const dateGroup = document.createElement('div');
-            dateGroup.className = 'date-group';
-            const displayDate = new Date(dateKey + 'T00:00:00');
-            const dateHeader = document.createElement('h3');
-            dateHeader.className = 'date-header';
-            let dateText = displayDate.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
-            if (dateKey === todayKey) { dateText += " (Hoje)"; dateHeader.style.color = '#16a34a'; }
+            const dateGroup = document.createElement("div");
+            dateGroup.className = "date-group";
+            const displayDate = new Date(dateKey + "T00:00:00");
+            const dateHeader = document.createElement("h3");
+            dateHeader.className = "date-header";
+            let dateText = displayDate.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
+            if (dateKey === todayKey) { dateText += " (Hoje)"; dateHeader.style.color = "#16a34a"; }
             dateHeader.innerHTML = `<i class="fas fa-calendar-day"></i> ${dateText}`;
-            const tasksList = document.createElement('div');
-            tasksList.className = 'tasks-list';
+            const tasksList = document.createElement("div");
+            tasksList.className = "tasks-list";
             tasksByDate[dateKey].sort((a, b) => new Date(a.Prazo) - new Date(b.Prazo)).forEach(task => {
-                const taskCard = document.createElement('div');
-                const statusClass = task.Status.replace(/\s+/g, '-');
-                const priorityClass = task.Prioridade || 'Média';
+                const taskCard = document.createElement("div");
+                const statusClass = task.Status.replace(/\s+/g, "-");
+                const priorityClass = task.Prioridade || "Média";
                 taskCard.className = `card task-card ${statusClass} ${priorityClass}`;
                 taskCard.dataset.taskId = task.ID_Tarefa;
                 const isOwner = currentUser.trim().toLowerCase() === task.Responsavel.trim().toLowerCase();
-                const buttonsDisabled = isOwner ? '' : 'disabled';
-                const prazo = new Date(task.Prazo).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                let priorityIcon = '<i class="fas fa-flag"></i>';
-                if (priorityClass === 'Alta') priorityIcon = '<i class="fas fa-exclamation-circle" style="color: var(--prio-alta);"></i>';
-                if (priorityClass === 'Urgente') priorityIcon = '<i class="fas fa-fire" style="color: var(--prio-urgente);"></i>';
+                const buttonsDisabled = isOwner ? "" : "disabled";
+                const prazo = new Date(task.Prazo).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+                let priorityIcon = "<i class=\"fas fa-flag\"></i>";
+                if (priorityClass === "Alta") priorityIcon = "<i class=\"fas fa-exclamation-circle\" style=\"color: var(--prio-alta);\"></i>";
+                if (priorityClass === "Urgente") priorityIcon = "<i class=\"fas fa-fire\" style=\"color: var(--prio-urgente);\"></i>";
                 taskCard.innerHTML = `
                     <div class="task-header"><div><div class="task-title">${task.Titulo_Tarefa}</div><div class="task-time"><i class="far fa-clock"></i> ${prazo}</div></div><span class="task-status ${statusClass}">${task.Status}</span></div>
-                    <div class="task-body">${task.Descricao || '<i>Sem descrição.</i>'}</div>
+                    <div class="task-body">${task.Descricao || "<i>Sem descrição.</i>"}</div>
                     <div class="task-footer"><span><i class="fas fa-user-circle"></i> ${task.Responsavel}</span><span class="task-priority">${priorityIcon} ${priorityClass}</span></div>
                     <div class="task-actions"><button class="action-btn" data-status="Em Andamento" ${buttonsDisabled}><i class="fas fa-spinner"></i> Em Andamento</button><button class="action-btn" data-status="Finalizado" ${buttonsDisabled}><i class="fas fa-check-circle"></i> Finalizado</button><button class="action-btn" data-status="Pendente" ${buttonsDisabled}><i class="fas fa-undo"></i> Marcar como Pendente</button></div>`;
                 tasksList.appendChild(taskCard);
@@ -139,64 +139,63 @@
         });
     };
     
-    tabsContainer.addEventListener('click', (e) => { if (e.target.classList.contains('tab-btn')) { tabsContainer.querySelector('.active').classList.remove('active'); e.target.classList.add('active'); activeFilter = e.target.dataset.filter; renderTasks(); } });
-    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error('Erro:', error); } }
+    tabsContainer.addEventListener("click", (e) => { if (e.target.classList.contains("tab-btn")) { tabsContainer.querySelector(".active").classList.remove("active"); e.target.classList.add("active"); activeFilter = e.target.dataset.filter; renderTasks(); } });
+    async function fetchAndRenderTasks() { tasksContainer.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i> Carregando tarefas...</div>`; try { const response = await fetch(SCRIPT_URL); allTasks = await response.json(); if (!Array.isArray(allTasks)) allTasks = []; renderTasks(); } catch (error) { tasksContainer.innerHTML = `<div class="loading">Erro ao carregar tarefas.</div>`; console.error("Erro:", error); } }
 
-    // --- FUNÇÕES DE ENVIO ATUALIZADAS ---
     async function sendData(data) {
         const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
         });
-        if (!response.ok) throw new Error('Falha na resposta da rede.');
+        if (!response.ok) throw new Error("Falha na resposta da rede.");
         return await response.json();
     }
 
-    taskForm.addEventListener('submit', async (e) => {
+    taskForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const btn = e.target.querySelector('button');
-        btn.textContent = 'Salvando...';
+        const btn = e.target.querySelector("button");
+        btn.textContent = "Salvando...";
         btn.disabled = true;
-        const taskData = { responsavel: document.getElementById('responsavel').value, titulo: document.getElementById('titulo').value, descricao: document.getElementById('descricao').value, prazo: document.getElementById('prazo').value, prioridade: document.getElementById('prioridade').value };
+        const taskData = { responsavel: document.getElementById("responsavel").value, titulo: document.getElementById("titulo").value, descricao: document.getElementById("descricao").value, prazo: document.getElementById("prazo").value, prioridade: document.getElementById("prioridade").value };
         try {
             const result = await sendData(taskData);
-            if (result.status !== 'success') throw new Error(result.message);
-            alert('Tarefa adicionada com sucesso!');
+            if (result.status !== "success") throw new Error(result.message);
+            alert("Tarefa adicionada com sucesso!");
             taskForm.reset();
             responsavelInput.value = currentUser;
-            fetchAndRenderTasks(); // Busca a lista atualizada
+            fetchAndRenderTasks();
         } catch (error) {
-            console.error('Erro ao adicionar tarefa:', error);
-            alert('Ocorreu um erro: ' + error.message);
+            console.error("Erro ao adicionar tarefa:", error);
+            alert("Ocorreu um erro: " + error.message);
         } finally {
-            btn.textContent = 'Adicionar Tarefa';
+            btn.textContent = "Adicionar Tarefa";
             btn.disabled = false;
         }
     });
 
-    tasksContainer.addEventListener('click', async (e) => {
-        const button = e.target.closest('.action-btn');
+    tasksContainer.addEventListener("click", async (e) => {
+        const button = e.target.closest(".action-btn");
         if (button && !button.disabled) {
-            const taskId = button.closest('.task-card').dataset.taskId;
+            const taskId = button.closest(".task-card").dataset.taskId;
             const newStatus = button.dataset.status;
-            button.textContent = 'Atualizando...';
-            const allButtonsInCard = button.parentElement.querySelectorAll('.action-btn');
+            button.textContent = "Atualizando...";
+            const allButtonsInCard = button.parentElement.querySelectorAll(".action-btn");
             allButtonsInCard.forEach(b => b.disabled = true);
-            const updateData = { action: 'updateStatus', id: taskId, status: newStatus };
+            const updateData = { action: "updateStatus", id: taskId, status: newStatus };
             try {
                 const result = await sendData(updateData);
-                if (result.status !== 'success') throw new Error(result.message);
-                fetchAndRenderTasks(); // Busca a lista atualizada
+                if (result.status !== "success") throw new Error(result.message);
+                fetchAndRenderTasks();
             } catch (error) {
-                console.error('Erro ao atualizar status:', error);
-                alert('Ocorreu um erro ao atualizar.');
-                renderTasks(); // Re-renderiza para restaurar os botões
+                console.error("Erro ao atualizar status:", error);
+                alert("Ocorreu um erro ao atualizar.");
+                renderTasks();
             }
         }
     });
     
-    document.addEventListener('DOMContentLoaded', () => { identifyUser(); fetchAndRenderTasks(); });
+    document.addEventListener("DOMContentLoaded", () => { identifyUser(); fetchAndRenderTasks(); });
 </script>
 
 </body>
